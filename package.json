@@ -1,0 +1,22 @@
+{
+  "name": "redux-usermanagement",
+  "version": "1.0.0",
+  "description": "Goalsetter app for redux",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon backend/server.js",
+    "server": "nodemon backend/server.js"
+  },
+  "author": "abhijith",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
+

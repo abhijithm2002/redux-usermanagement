@@ -20,9 +20,20 @@ const userSchema = mongoose.Schema({
         type : Number,
         required : [true, 'Please add a phone number']
     },
+    image_url : {
+        type : String
+    },
+    is_admin : {
+        type : Boolean,
+        default : false
+    },
+    is_active : {
+        type: Boolean,
+        default: true
+    }
 },
 {
-    timeStamp : true
+    timeStamps : true
 })
 
 module.exports = mongoose.model("User",userSchema)

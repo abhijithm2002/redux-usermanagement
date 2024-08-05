@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react"
 import { FaUser } from 'react-icons/fa'
+import { useSelector, useDispatch } from "react-redux"
+import { useNavigate } from "react-router-dom"
+import {toast} from 'react-toastify'
+import { register,reset } from "../features/auth/authSlice"
+import Spinner from "../components/Spinner"
+
+
 function Register() {
     const [formData, setFormData] = useState({
         name: '',
@@ -11,6 +18,24 @@ function Register() {
 
     const { name, email, phone, password, password2 } = formData
 
+
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const {user, isLoading, isError, isSuccess, message} = useSelector((state)=> state.auth)
+
+
+    useEffect(()=>{
+        if(isError) {
+            toast.error(message)
+        }
+        if (isSuccess || user) {
+            navigate('/');
+        }
+        dispatch(reset())
+    },[user,isError,isSuccess,message,navigate,dispatch])
+
+
     const onChange = (e) => {
         setFormData((prevState)=> ({
             ...prevState,
@@ -18,8 +43,41 @@ function Register() {
         }))
     }
 
+    const validateForm = () => {
+        if (!name || !email || !phone || !password || !password2) {
+            toast.error("Please fill in all fields.");
+            return false;
+        }
+        if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+            toast.error("Invalid email format.");
+            return false;
+        }
+        if (!/^\d{10}$/.test(phone)) {
+            toast.error("Phone number must be exactly 10 digits.");
+            return false;
+        }
+        if (password.length < 6) {
+            toast.error("Password must be at least 6 characters long.");
+            return false;
+        }
+        if (password !== password2) {
+            toast.error("Passwords do not match.");
+            return false;
+        }
+        return true;
+    };
+
+
     const onSubmit = (e) => {
-        e.preventDefault()
+        e.preventDefault();
+        if (validateForm()) {
+            const userData = { name, email, phone, password };
+            dispatch(register(userData));
+        }
+    };
+
+    if(isLoading) {
+        return <Spinner />
     }
     return (
         <>

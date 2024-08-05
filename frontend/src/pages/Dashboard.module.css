@@ -1,0 +1,38 @@
+.dashboardContainer {
+    font-family: 'Arial', sans-serif;
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    background-color: #fff;
+  }
+  
+  .userInfo {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-left: 5px solid #007bff;
+  }
+  
+  .userInfo p {
+    margin: 5px 0;
+  }
+  
+  .linkToProfile {
+    display: block;
+    width: fit-content;
+    padding: 10px 15px;
+    margin-top: 20px;
+    text-align: center;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+  
+  .linkToProfile:hover {
+    background-color: #0056b3;
+  }
+  

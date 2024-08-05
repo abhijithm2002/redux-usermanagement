@@ -27,7 +27,8 @@ const registerUser = asyncHandler( async(req, res) => {
         name,
         email,
         password : hashedPassword,
-        phone
+        phone,
+        
     })
 
     if(user) {
@@ -36,6 +37,7 @@ const registerUser = asyncHandler( async(req, res) => {
             name : user.name,
             email : user.email,
             phone : user.phone,
+            image_url: user.image_url,
             token : generateToken(user._id)
         })
     } else {
@@ -49,8 +51,17 @@ const registerUser = asyncHandler( async(req, res) => {
 const loginUser = asyncHandler(async(req, res) => {
     const {email, password} = req.body
 
+    if (!email || !password) {
+        res.status(400);
+        throw new Error('Please provide an email and password');
+    }
     // check for user email
     const user = await User.findOne({email})
+
+    if (!user.is_active) {
+        res.status(400)
+        throw new Error('User is Blocked')
+    }
 
     if(user && (await bcrypt.compare(password,user.password))) {
         res.json({
@@ -58,26 +69,69 @@ const loginUser = asyncHandler(async(req, res) => {
             name : user.name,
             email : user.email,
             phone : user.phone,
+            image_url: user.image_url,
             token : generateToken(user._id)
 
         })
     } else {
         res.status(400)
-        throw new Error('Invalid credentials')
+        throw new Error('Invalid Email and Password')
     }
 
     res.json({message: 'login User'})
 })
+
+
+
+
 const getMe = asyncHandler(async(req, res) => {
-  const {_id, name, email, phone} = await User.findById(req.user.id)
-  res.status(200).json({
-    id: _id,
-    name,
-    email,
-    phone
-  })
+  res.status(200).json(req.user)
 })
 
+const updateUser = asyncHandler(async (req, res) => {
+    
+    // const userId = req.user._id;
+    console.log(req.body);
+    const { name, email, phone,id } = req.body;
+
+    if (!name || !email || !phone) {
+        res.status(400);
+        throw new Error('All fields must be filled: name, email, and phone.');
+    }
+
+    // Prepare the update data
+    const updateData = { name, email, phone };
+
+    // Find the user by ID and update
+    const user = await User.findByIdAndUpdate(id, updateData, {
+        new: true,  
+    });
+
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    // Return the updated user data
+    res.status(200).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+   
+    });
+}); 
+
+const updateProfileImage = asyncHandler(async(req, res) => {
+    const {id, imageUrl} = req.body.userData
+    const user = await User.findByIdAndUpdate(id, {image_url : imageUrl}, {new: true})
+    if(!user) {
+        res.status(400);
+        throw new Error('Np Data updated')
+    }
+console.log("userrrr",user)
+    res.status(200).json(user)
+})
 
 // Generate JWT
 const generateToken = (id) =>{
@@ -90,5 +144,7 @@ const generateToken = (id) =>{
 module.exports = {
     registerUser,
     loginUser,
-    getMe
+    getMe,
+    updateUser,
+    updateProfileImage
 }
